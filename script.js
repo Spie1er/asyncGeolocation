@@ -3,11 +3,50 @@
 const btn = document.querySelector('.btn-country');
 const countriesContainer = document.querySelector('.countries');
 
+const renderError = function (message) {
+  countriesContainer.insertAdjacentText('beforeend', message);
+  countriesContainer.style.opacity = 1;
+};
+
+const renderCountry = function (country, className = '') {
+  const html = `<article class="country ${className}">
+      <img class="country__img" src="${country.flags.png}" />
+      <div class="country__data">
+        <h3 class="country__name">${country.name.official}</h3>
+        <h4 class="country__region">${country.region}</h4>
+        <p class="country__row"><span>📍</span>${country.capital}</p>
+        <p class="country__row"><span>👫</span>${(
+          +country.population / 1000000
+        ).toFixed(1)}</p>
+        <p class="country__row"><span>🗣️</span>${
+          country.languages[Object.keys(country.languages)[0]]
+        }</p>
+        <p class="country__row"><span>💰</span>${
+          country.currencies[Object.keys(country.currencies)[0]].name
+        }</p>
+      </div>
+      </article>`;
+
+  countriesContainer.insertAdjacentHTML('beforeend', html);
+};
+
+// getCountryAndNeighbour('portugal');
+
+const getJSON = function (url, errorMsg = 'Something went worng') {
+  return fetch(url).then(response => {
+    if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
+
+    return response.json();
+  });
+};
+
 const getPosition = function () {
   return new Promise(function (resolve, reject) {
     navigator.geolocation.getCurrentPosition(resolve, reject);
   });
 };
+
+// getPosition().then(res => console.log(res));
 
 const whereAmI = function () {
   getPosition()
